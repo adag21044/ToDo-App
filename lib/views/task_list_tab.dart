@@ -19,7 +19,7 @@ class TaskListTab extends StatelessWidget {
         ? const Center(
             child: Text(
               'No tasks added yet.',
-              style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
+              style: TextStyle(fontSize: 16, color: Colors.grey),
             ),
           )
         : ListView.builder(
@@ -28,15 +28,22 @@ class TaskListTab extends StatelessWidget {
               final task = tasks[index];
               return Card(
                 margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                elevation: 3,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
+                elevation: 3,
                 child: ListTile(
-                  title: Text(task.title),
-                  subtitle: Text(task.description),
+                  tileColor: const Color(0xFF1E1E2C),
+                  title: Text(
+                    task.title,
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                  subtitle: Text(
+                    task.description,
+                    style: const TextStyle(color: Colors.grey),
+                  ),
                   trailing: IconButton(
-                    icon: const Icon(Icons.star_border),
+                    icon: const Icon(Icons.star_border, color: Colors.teal),
                     onPressed: () {
                       // Add favorite functionality if needed
                     },

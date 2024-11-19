@@ -1,36 +1,88 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/task_view_model.dart';
-import 'add_task_dialog.dart';
 import 'task_list_tab.dart';
+import 'add_task_dialog.dart';
 
-class TasksPage extends StatelessWidget {
+class TasksPage extends StatefulWidget {
   const TasksPage({Key? key}) : super(key: key);
+
+  @override
+  _TasksPageState createState() => _TasksPageState();
+}
+
+class _TasksPageState extends State<TasksPage> {
+  final List<String> _categories = ['My Tasks', 'Project Ideas', 'A', 'Daily'];
+
+  void _addNewCategory() {
+    TextEditingController newListController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Add New List'),
+          content: TextField(
+            controller: newListController,
+            decoration: const InputDecoration(
+              labelText: 'List Name',
+              border: OutlineInputBorder(),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                if (newListController.text.isNotEmpty) {
+                  setState(() {
+                    _categories.add(newListController.text);
+                  });
+                  Navigator.pop(context);
+                }
+              },
+              child: const Text('Add'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 4, // Number of tabs
+      length: _categories.length,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Görevler'),
-          bottom: const TabBar(
-            isScrollable: true, // Allows scrolling if there are many tabs
-            tabs: [
-              Tab(text: 'My Tasks'),
-              Tab(text: 'Project Ideas'),
-              Tab(text: 'A'),
-              Tab(text: 'Daily'),
-            ],
+          centerTitle: true, // Center-aligns the title
+          title: const Text(
+            'Tasks',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          actions: [
+            TextButton(
+              onPressed: _addNewCategory,
+              child: const Text(
+                '+ Yeni Liste',
+                style: TextStyle(color: Colors.teal, fontSize: 16),
+              ),
+            ),
+          ],
+          bottom: TabBar(
+            isScrollable: true,
+            tabs: _categories
+                .map((category) => Tab(text: category))
+                .toList(),
           ),
         ),
-        body: const TabBarView(
-          children: [
-            TaskListTab(category: 'My Tasks'),
-            TaskListTab(category: 'Project Ideas'),
-            TaskListTab(category: 'A'),
-            TaskListTab(category: 'Daily'),
-          ],
+        body: TabBarView(
+          children: _categories
+              .map((category) => TaskListTab(category: category))
+              .toList(),
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
@@ -39,6 +91,7 @@ class TasksPage extends StatelessWidget {
               builder: (_) => const AddTaskDialog(),
             );
           },
+          backgroundColor: Colors.teal,
           child: const Icon(Icons.add),
         ),
       ),
