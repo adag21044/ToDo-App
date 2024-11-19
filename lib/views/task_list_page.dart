@@ -12,7 +12,11 @@ class TaskListPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Görevler'),
+        title: const Text(
+          'Görevler',
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Colors.teal,
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
@@ -26,19 +30,47 @@ class TaskListPage extends StatelessWidget {
         ],
       ),
       body: taskViewModel.tasks.isEmpty
-          ? const Center(child: Text('Henüz bir görev eklenmedi.'))
+          ? const Center(
+              child: Text(
+                'Henüz bir görev eklenmedi.',
+                style: TextStyle(fontSize: 18, fontStyle: FontStyle.italic),
+              ),
+            )
           : ListView.builder(
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
               itemCount: taskViewModel.tasks.length,
               itemBuilder: (context, index) {
                 final task = taskViewModel.tasks[index];
-                return ListTile(
-                  title: Text(task.title),
-                  subtitle: Text(task.category),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.delete),
-                    onPressed: () {
-                      taskViewModel.removeTask(task);
-                    },
+                return Card(
+                  elevation: 5,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  margin: const EdgeInsets.only(bottom: 10),
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor: Colors.teal,
+                      child: Text(
+                        task.urgency.toString(),
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                    ),
+                    title: Text(
+                      task.title,
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.w500),
+                    ),
+                    subtitle: Text(
+                      '${task.category} - ${task.description}',
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.delete, color: Colors.red),
+                      onPressed: () {
+                        taskViewModel.removeTask(task);
+                      },
+                    ),
                   ),
                 );
               },

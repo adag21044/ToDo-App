@@ -13,116 +13,92 @@ class AddTaskDialog extends StatefulWidget {
 class _AddTaskDialogState extends State<AddTaskDialog> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
+  String _category = 'Daily';
+  int _urgency = 1;
+  int _importance = 1;
   DateTime? _reminderTime;
-  final _categories = ['İş', 'Kişisel', 'Eğitim'];
-  String _selectedCategory = 'İş';
-  int _urgency = 1; // Varsayılan değer
-  int _importance = 1; // Varsayılan değer
 
   @override
   Widget build(BuildContext context) {
-    final taskViewModel = Provider.of<TaskViewModel>(context, listen: false);
-
     return AlertDialog(
-      title: const Text('Yeni Görev Ekle'),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      title: const Text('Add New Task'),
       content: SingleChildScrollView(
         child: Column(
           children: [
             TextField(
               controller: _titleController,
-              decoration: const InputDecoration(labelText: 'Başlık'),
+              decoration: const InputDecoration(labelText: 'Title'),
             ),
             TextField(
               controller: _descriptionController,
-              decoration: const InputDecoration(labelText: 'Açıklama'),
+              decoration: const InputDecoration(labelText: 'Description'),
             ),
             DropdownButtonFormField<String>(
-              value: _selectedCategory,
-              items: _categories
-                  .map((category) =>
-                      DropdownMenuItem(value: category, child: Text(category)))
+              value: _category,
+              items: ['Daily', 'Projects', 'Others']
+                  .map((e) => DropdownMenuItem(value: e, child: Text(e)))
                   .toList(),
-              onChanged: (value) => _selectedCategory = value!,
-              decoration: const InputDecoration(labelText: 'Kategori'),
-            ),
-            DropdownButtonFormField<int>(
-              value: _urgency,
-              items: [1, 2, 3]
-                  .map((value) =>
-                      DropdownMenuItem(value: value, child: Text('Aciliyet: $value')))
-                  .toList(),
-              onChanged: (value) {
-                setState(() {
-                  _urgency = value!;
-                });
-              },
-              decoration: const InputDecoration(labelText: 'Aciliyet'),
-            ),
-            DropdownButtonFormField<int>(
-              value: _importance,
-              items: [1, 2, 3]
-                  .map((value) =>
-                      DropdownMenuItem(value: value, child: Text('Önem: $value')))
-                  .toList(),
-              onChanged: (value) {
-                setState(() {
-                  _importance = value!;
-                });
-              },
-              decoration: const InputDecoration(labelText: 'Önem'),
+              onChanged: (value) => setState(() => _category = value!),
+              decoration: const InputDecoration(labelText: 'Category'),
             ),
             TextButton(
               onPressed: () async {
-                final selectedDate = await showDatePicker(
+                final date = await showDatePicker(
                   context: context,
                   initialDate: DateTime.now(),
                   firstDate: DateTime.now(),
                   lastDate: DateTime(2100),
                 );
-                if (selectedDate != null) {
-                  final selectedTime = await showTimePicker(
+                if (date != null) {
+                  final time = await showTimePicker(
                     context: context,
                     initialTime: TimeOfDay.now(),
                   );
-                  if (selectedTime != null) {
+                  if (time != null) {
                     setState(() {
                       _reminderTime = DateTime(
-                        selectedDate.year,
-                        selectedDate.month,
-                        selectedDate.day,
-                        selectedTime.hour,
-                        selectedTime.minute,
+                        date.year,
+                        date.month,
+                        date.day,
+                        time.hour,
+                        time.minute,
                       );
                     });
                   }
                 }
               },
-              child: Text(_reminderTime == null
-                  ? 'Hatırlatıcı Ayarla'
-                  : _reminderTime.toString()),
+              child: Text(
+                _reminderTime == null
+                    ? 'Set Reminder'
+                    : _reminderTime.toString(),
+              ),
             ),
           ],
         ),
       ),
       actions: [
         TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancel'),
+        ),
+        ElevatedButton(
           onPressed: () {
             if (_titleController.text.isNotEmpty &&
-                _descriptionController.text.isNotEmpty &&
-                _reminderTime != null) {
+                _descriptionController.text.isNotEmpty) {
               final task = Task(
                 title: _titleController.text,
                 description: _descriptionController.text,
-                reminderTime: _reminderTime!,
-                category: _selectedCategory,
+                reminderTime: _reminderTime ?? DateTime.now(),
                 urgency: _urgency,
                 importance: _importance,
+                category: _category,
               );
-              taskViewModel.addTask(task);
-              Navigator.of(context).pop();
+              Provider.of<TaskViewModel>(context, listen: false).addTask(task);
+              Navigator.pop(context);
             }
           },
-          child: const Text('Ekle'),
+          child: const Text('Add'),
         ),
       ],
     );
