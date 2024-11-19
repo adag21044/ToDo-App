@@ -13,10 +13,8 @@ class AddTaskDialog extends StatefulWidget {
 class _AddTaskDialogState extends State<AddTaskDialog> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
-  String _category = 'Daily';
-  int _urgency = 1;
-  int _importance = 1;
-  DateTime? _reminderTime;
+  String _selectedCategory = 'My Tasks';
+  final List<String> _categories = ['My Tasks', 'Project Ideas', 'A', 'Daily'];
 
   @override
   Widget build(BuildContext context) {
@@ -30,49 +28,22 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
               controller: _titleController,
               decoration: const InputDecoration(labelText: 'Title'),
             ),
+            const SizedBox(height: 10),
             TextField(
               controller: _descriptionController,
               decoration: const InputDecoration(labelText: 'Description'),
             ),
+            const SizedBox(height: 10),
             DropdownButtonFormField<String>(
-              value: _category,
-              items: ['Daily', 'Projects', 'Others']
-                  .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+              value: _selectedCategory,
+              items: _categories
+                  .map((category) => DropdownMenuItem(
+                        value: category,
+                        child: Text(category),
+                      ))
                   .toList(),
-              onChanged: (value) => setState(() => _category = value!),
+              onChanged: (value) => setState(() => _selectedCategory = value!),
               decoration: const InputDecoration(labelText: 'Category'),
-            ),
-            TextButton(
-              onPressed: () async {
-                final date = await showDatePicker(
-                  context: context,
-                  initialDate: DateTime.now(),
-                  firstDate: DateTime.now(),
-                  lastDate: DateTime(2100),
-                );
-                if (date != null) {
-                  final time = await showTimePicker(
-                    context: context,
-                    initialTime: TimeOfDay.now(),
-                  );
-                  if (time != null) {
-                    setState(() {
-                      _reminderTime = DateTime(
-                        date.year,
-                        date.month,
-                        date.day,
-                        time.hour,
-                        time.minute,
-                      );
-                    });
-                  }
-                }
-              },
-              child: Text(
-                _reminderTime == null
-                    ? 'Set Reminder'
-                    : _reminderTime.toString(),
-              ),
             ),
           ],
         ),
@@ -89,10 +60,10 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
               final task = Task(
                 title: _titleController.text,
                 description: _descriptionController.text,
-                reminderTime: _reminderTime ?? DateTime.now(),
-                urgency: _urgency,
-                importance: _importance,
-                category: _category,
+                category: _selectedCategory,
+                reminderTime: DateTime.now(),
+                urgency: 1,
+                importance: 1,
               );
               Provider.of<TaskViewModel>(context, listen: false).addTask(task);
               Navigator.pop(context);
