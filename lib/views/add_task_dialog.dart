@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/task.dart';
 import '../viewmodels/task_view_model.dart';
+import '../utils/notification_service.dart'; // Bildirim servisini import edin.
 
 class AddTaskDialog extends StatefulWidget {
   const AddTaskDialog({Key? key}) : super(key: key);
@@ -16,26 +17,35 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
   DateTime? _reminderTime;
   final _categories = ['İş', 'Kişisel', 'Eğitim'];
   String _selectedCategory = 'İş';
-  int _urgency = 1; // Varsayılan değer
-  int _importance = 1; // Varsayılan değer
+  int _urgency = 1;
+  int _importance = 1;
 
   @override
   Widget build(BuildContext context) {
     final taskViewModel = Provider.of<TaskViewModel>(context, listen: false);
 
     return AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       title: const Text('Yeni Görev Ekle'),
       content: SingleChildScrollView(
         child: Column(
           children: [
             TextField(
               controller: _titleController,
-              decoration: const InputDecoration(labelText: 'Başlık'),
+              decoration: const InputDecoration(
+                labelText: 'Başlık',
+                border: OutlineInputBorder(),
+              ),
             ),
+            const SizedBox(height: 10),
             TextField(
               controller: _descriptionController,
-              decoration: const InputDecoration(labelText: 'Açıklama'),
+              decoration: const InputDecoration(
+                labelText: 'Açıklama',
+                border: OutlineInputBorder(),
+              ),
             ),
+            const SizedBox(height: 10),
             DropdownButtonFormField<String>(
               value: _selectedCategory,
               items: _categories
@@ -43,35 +53,17 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                       DropdownMenuItem(value: category, child: Text(category)))
                   .toList(),
               onChanged: (value) => _selectedCategory = value!,
-              decoration: const InputDecoration(labelText: 'Kategori'),
+              decoration: const InputDecoration(
+                labelText: 'Kategori',
+                border: OutlineInputBorder(),
+              ),
             ),
-            DropdownButtonFormField<int>(
-              value: _urgency,
-              items: [1, 2, 3]
-                  .map((value) =>
-                      DropdownMenuItem(value: value, child: Text('Aciliyet: $value')))
-                  .toList(),
-              onChanged: (value) {
-                setState(() {
-                  _urgency = value!;
-                });
-              },
-              decoration: const InputDecoration(labelText: 'Aciliyet'),
-            ),
-            DropdownButtonFormField<int>(
-              value: _importance,
-              items: [1, 2, 3]
-                  .map((value) =>
-                      DropdownMenuItem(value: value, child: Text('Önem: $value')))
-                  .toList(),
-              onChanged: (value) {
-                setState(() {
-                  _importance = value!;
-                });
-              },
-              decoration: const InputDecoration(labelText: 'Önem'),
-            ),
-            TextButton(
+            const SizedBox(height: 10),
+            ElevatedButton.icon(
+              icon: const Icon(Icons.calendar_today),
+              label: Text(_reminderTime == null
+                  ? 'Hatırlatıcı Ayarla'
+                  : _reminderTime.toString()),
               onPressed: () async {
                 final selectedDate = await showDatePicker(
                   context: context,
@@ -97,15 +89,18 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                   }
                 }
               },
-              child: Text(_reminderTime == null
-                  ? 'Hatırlatıcı Ayarla'
-                  : _reminderTime.toString()),
             ),
           ],
         ),
       ),
       actions: [
         TextButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: const Text('İptal'),
+        ),
+        ElevatedButton(
           onPressed: () {
             if (_titleController.text.isNotEmpty &&
                 _descriptionController.text.isNotEmpty &&
@@ -118,7 +113,18 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                 urgency: _urgency,
                 importance: _importance,
               );
+
+              // Görev Ekle
               taskViewModel.addTask(task);
+
+              // Bildirim Zamanla
+              NotificationService.scheduleNotification(
+                id: task.hashCode,
+                title: 'Görev Hatırlatıcı',
+                body: 'Görev: ${task.title}',
+                scheduledTime: task.reminderTime,
+              );
+
               Navigator.of(context).pop();
             }
           },
