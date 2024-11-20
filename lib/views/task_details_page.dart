@@ -19,6 +19,12 @@ class TaskDetailsPage extends StatelessWidget {
           children: [
             Text(task.description, style: const TextStyle(fontSize: 16)),
             const SizedBox(height: 10),
+            Text('Category: ${task.category}'),
+            const SizedBox(height: 10),
+            Text('Urgency: ${task.urgency}'),
+            const SizedBox(height: 10),
+            Text('Importance: ${task.importance}'),
+            const SizedBox(height: 10),
             Text('Reminder: ${task.reminderTime}'),
           ],
         ),

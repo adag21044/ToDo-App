@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../models/task.dart';
 import '../viewmodels/task_view_model.dart';
 import 'task_details_page.dart';
 
@@ -10,15 +11,17 @@ class TaskListTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // tasks listesini filtreleme
     final tasks = Provider.of<TaskViewModel>(context)
-        .tasks
-        .where((task) => task.category == category)
-        .toList();
+    .tasks
+    .where((task) => task.category == category)
+    .toList();
+
 
     return tasks.isEmpty
         ? const Center(
             child: Text(
-              'No tasks added yet.',
+              'Henüz bir görev eklenmedi.',
               style: TextStyle(fontSize: 16, color: Colors.grey),
             ),
           )
@@ -43,9 +46,10 @@ class TaskListTab extends StatelessWidget {
                     style: const TextStyle(color: Colors.grey),
                   ),
                   trailing: IconButton(
-                    icon: const Icon(Icons.star_border, color: Colors.teal),
+                    icon: const Icon(Icons.delete, color: Colors.red),
                     onPressed: () {
-                      // Add favorite functionality if needed
+                      Provider.of<TaskViewModel>(context, listen: false)
+                          .removeTask(task);
                     },
                   ),
                   onTap: () {

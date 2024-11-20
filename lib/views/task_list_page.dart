@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/task_view_model.dart';
-import 'add_task_dialog.dart';
+import '../views/add_task_dialog.dart';
 
 class TaskListPage extends StatelessWidget {
   const TaskListPage({Key? key}) : super(key: key);
@@ -12,65 +12,33 @@ class TaskListPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Görevler',
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: Colors.teal,
+        title: const Text('Tasks'),
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
             onPressed: () {
               showDialog(
                 context: context,
-                builder: (context) => const AddTaskDialog(),
+                builder: (_) => const AddTaskDialog(categories: [],),
               );
             },
           ),
         ],
       ),
       body: taskViewModel.tasks.isEmpty
-          ? const Center(
-              child: Text(
-                'Henüz bir görev eklenmedi.',
-                style: TextStyle(fontSize: 18, fontStyle: FontStyle.italic),
-              ),
-            )
+          ? const Center(child: Text('No tasks available.'))
           : ListView.builder(
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
               itemCount: taskViewModel.tasks.length,
               itemBuilder: (context, index) {
                 final task = taskViewModel.tasks[index];
-                return Card(
-                  elevation: 5,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  margin: const EdgeInsets.only(bottom: 10),
-                  child: ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: Colors.teal,
-                      child: Text(
-                        task.urgency.toString(),
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                    ),
-                    title: Text(
-                      task.title,
-                      style: const TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.w500),
-                    ),
-                    subtitle: Text(
-                      '${task.category} - ${task.description}',
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.delete, color: Colors.red),
-                      onPressed: () {
-                        taskViewModel.removeTask(task);
-                      },
-                    ),
+                return ListTile(
+                  title: Text(task.title),
+                  subtitle: Text(task.description),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.delete),
+                    onPressed: () {
+                      taskViewModel.removeTask(task);
+                    },
                   ),
                 );
               },

@@ -12,28 +12,26 @@ class TasksPage extends StatefulWidget {
 }
 
 class _TasksPageState extends State<TasksPage> {
-  final List<String> _categories = ['My Tasks', 'Project Ideas', 'A', 'Daily'];
+  final List<String> _categories = ['My Tasks', 'Project Ideas', 'Daily', 'Work'];
 
   void _addNewCategory() {
-    TextEditingController newListController = TextEditingController();
+    final TextEditingController newListController = TextEditingController();
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Add New List'),
+          title: const Text('Yeni Liste Ekle'),
           content: TextField(
             controller: newListController,
             decoration: const InputDecoration(
-              labelText: 'List Name',
+              labelText: 'Liste Adı',
               border: OutlineInputBorder(),
             ),
           ),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text('Cancel'),
+              onPressed: () => Navigator.pop(context),
+              child: const Text('İptal'),
             ),
             ElevatedButton(
               onPressed: () {
@@ -44,7 +42,7 @@ class _TasksPageState extends State<TasksPage> {
                   Navigator.pop(context);
                 }
               },
-              child: const Text('Add'),
+              child: const Text('Ekle'),
             ),
           ],
         );
@@ -58,9 +56,9 @@ class _TasksPageState extends State<TasksPage> {
       length: _categories.length,
       child: Scaffold(
         appBar: AppBar(
-          centerTitle: true, // Center-aligns the title
+          centerTitle: true,
           title: const Text(
-            'Tasks',
+            'Görevler',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           actions: [
@@ -85,15 +83,14 @@ class _TasksPageState extends State<TasksPage> {
               .toList(),
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            showDialog(
-              context: context,
-              builder: (_) => const AddTaskDialog(),
-            );
-          },
-          backgroundColor: Colors.teal,
-          child: const Icon(Icons.add),
-        ),
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (_) => AddTaskDialog(categories: _categories),
+          );
+        },
+        child: const Icon(Icons.add),
+      ),
       ),
     );
   }
