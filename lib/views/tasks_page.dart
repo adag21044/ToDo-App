@@ -83,14 +83,14 @@ class _TasksPageState extends State<TasksPage> {
               .toList(),
         ),
         floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showDialog(
-            context: context,
-            builder: (_) => AddTaskDialog(categories: _categories),
-          );
-        },
-        child: const Icon(Icons.add),
-      ),
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (_) => AddTaskDialog(categories: _categories),
+            );
+          },
+          child: const Icon(Icons.add),
+        ),
       ),
     );
   }

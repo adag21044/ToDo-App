@@ -1,3 +1,5 @@
+import 'subtask.dart';
+
 class Task {
   final int? id;
   final String title;
@@ -6,6 +8,8 @@ class Task {
   final int urgency;
   final int importance;
   final String category;
+  bool isCompleted;
+  List<Subtask> subtasks;
 
   Task({
     this.id,
@@ -15,5 +19,8 @@ class Task {
     required this.urgency,
     required this.importance,
     required this.category,
-  });
+    this.isCompleted = false,
+    List<Subtask>? subtasks,
+  }) : subtasks = subtasks ?? []; // Ensure subtasks defaults to an empty list
 }
+

@@ -11,12 +11,17 @@ class TaskListTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // tasks listesini filtreleme
     final tasks = Provider.of<TaskViewModel>(context)
-    .tasks
-    .where((task) => task.category == category)
-    .toList();
-
+        .tasks
+        .where((task) => task.category == category)
+        .toList()
+      ..sort((a, b) {
+        int importanceComparison = b.importance.compareTo(a.importance);
+        if (importanceComparison != 0) {
+          return importanceComparison;
+        }
+        return b.urgency.compareTo(a.urgency);
+      });
 
     return tasks.isEmpty
         ? const Center(
@@ -37,13 +42,30 @@ class TaskListTab extends StatelessWidget {
                 elevation: 3,
                 child: ListTile(
                   tileColor: const Color(0xFF1E1E2C),
+                  leading: Checkbox(
+                    value: task.isCompleted,
+                    onChanged: (value) {
+                      Provider.of<TaskViewModel>(context, listen: false)
+                          .toggleTaskCompletion(task);
+                    },
+                  ),
                   title: Text(
                     task.title,
-                    style: const TextStyle(color: Colors.white),
+                    style: TextStyle(
+                      color: Colors.white,
+                      decoration: task.isCompleted
+                          ? TextDecoration.lineThrough
+                          : TextDecoration.none,
+                    ),
                   ),
                   subtitle: Text(
                     task.description,
-                    style: const TextStyle(color: Colors.grey),
+                    style: TextStyle(
+                      color: task.isCompleted ? Colors.grey : Colors.white70,
+                      decoration: task.isCompleted
+                          ? TextDecoration.lineThrough
+                          : TextDecoration.none,
+                    ),
                   ),
                   trailing: IconButton(
                     icon: const Icon(Icons.delete, color: Colors.red),
