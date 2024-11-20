@@ -9,14 +9,9 @@ class TaskViewModel extends ChangeNotifier {
 
   // Add a task
   void addTask(Task task) {
-    task.subtasks = task.subtasks ?? []; // Ensure subtasks is not null
-    _tasks.add(task);
+    _tasks.add(task); // Subtasks are already initialized
     notifyListeners();
   }
-
-
-
-
 
   // Remove a task
   void removeTask(Task task) {

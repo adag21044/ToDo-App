@@ -164,13 +164,15 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
             if (_titleController.text.isNotEmpty &&
                 _descriptionController.text.isNotEmpty) {
               final task = Task(
-                title: _titleController.text,
-                description: _descriptionController.text,
-                category: _selectedCategory,
-                reminderTime: _reminderTime,
-                urgency: _urgency,
-                importance: _importance,
-              );
+              title: _titleController.text,
+              description: _descriptionController.text,
+              category: _selectedCategory,
+              reminderTime: _reminderTime,
+              urgency: _urgency,
+              importance: _importance,
+              subtasks: [], // Explicitly initialize subtasks as an empty list
+            );
+
               Provider.of<TaskViewModel>(context, listen: false).addTask(task);
               Navigator.pop(context);
             }
