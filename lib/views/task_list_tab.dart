@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../models/task.dart';
 import '../viewmodels/task_view_model.dart';
-import 'task_details_page.dart';
 
 class TaskListTab extends StatelessWidget {
   final String category;
@@ -34,9 +34,23 @@ class TaskListTab extends StatelessWidget {
                 elevation: 3,
                 child: ListTile(
                   tileColor: const Color(0xFF1E1E2C),
+                  leading: Checkbox(
+                    value: task.isCompleted, // Null olmadığından emin ol
+                    onChanged: (bool? value) {
+                      if (value != null) {
+                        Provider.of<TaskViewModel>(context, listen: false)
+                            .toggleTaskCompletion(task);
+                      }
+                    },
+                  ),
                   title: Text(
                     task.title,
-                    style: const TextStyle(color: Colors.white),
+                    style: TextStyle(
+                      color: task.isCompleted ? Colors.grey : Colors.white,
+                      decoration: task.isCompleted
+                          ? TextDecoration.lineThrough
+                          : TextDecoration.none,
+                    ),
                   ),
                   subtitle: Text(
                     task.description,
@@ -45,16 +59,11 @@ class TaskListTab extends StatelessWidget {
                   trailing: IconButton(
                     icon: const Icon(Icons.star_border, color: Colors.teal),
                     onPressed: () {
-                      // Add favorite functionality if needed
+                      // Favori ekleme fonksiyonelliği ekleyebilirsiniz
                     },
                   ),
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => TaskDetailsPage(task: task),
-                      ),
-                    );
+                    // Görev detayına gitme işlemi
                   },
                 ),
               );

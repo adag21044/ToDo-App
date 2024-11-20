@@ -16,7 +16,7 @@ class TaskListPage extends StatelessWidget {
           'Görevler',
           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.teal,
+        backgroundColor: Colors.white,
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
@@ -49,7 +49,7 @@ class TaskListPage extends StatelessWidget {
                   margin: const EdgeInsets.only(bottom: 10),
                   child: ListTile(
                     leading: CircleAvatar(
-                      backgroundColor: Colors.teal,
+                      backgroundColor: Colors.black,
                       child: Text(
                         task.urgency.toString(),
                         style: const TextStyle(color: Colors.white),

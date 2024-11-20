@@ -33,7 +33,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
           ),
           DropdownButtonFormField(
             value: _category,
-            items: ['Günlük', 'Projeler', 'Diğer']
+            items: []
                 .map((e) => DropdownMenuItem(value: e, child: Text(e)))
                 .toList(),
             onChanged: (value) => setState(() => _category = value as String),

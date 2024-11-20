@@ -16,17 +16,14 @@ class _TasksPageState extends State<TasksPage> {
 
   void _addNewCategory() {
     TextEditingController newListController = TextEditingController();
-    showDialog(
+    showDialog( 
       context: context,
       builder: (context) {
         return AlertDialog(
           title: const Text('Add New List'),
           content: TextField(
             controller: newListController,
-            decoration: const InputDecoration(
-              labelText: 'List Name',
-              border: OutlineInputBorder(),
-            ),
+            decoration: const InputDecoration(labelText: 'List Name'),
           ),
           actions: [
             TextButton(
@@ -58,11 +55,8 @@ class _TasksPageState extends State<TasksPage> {
       length: _categories.length,
       child: Scaffold(
         appBar: AppBar(
-          centerTitle: true, // Center-aligns the title
-          title: const Text(
-            'Tasks',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
+          centerTitle: true,
+          title: const Text('Tasks'),
           actions: [
             TextButton(
               onPressed: _addNewCategory,
@@ -74,9 +68,7 @@ class _TasksPageState extends State<TasksPage> {
           ],
           bottom: TabBar(
             isScrollable: true,
-            tabs: _categories
-                .map((category) => Tab(text: category))
-                .toList(),
+            tabs: _categories.map((category) => Tab(text: category)).toList(),
           ),
         ),
         body: TabBarView(

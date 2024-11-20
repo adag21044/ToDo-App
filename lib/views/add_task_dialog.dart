@@ -20,40 +20,18 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      backgroundColor: const Color(0xFF1E1E2C),
-      title: const Text(
-        'Add New Task',
-        style: TextStyle(color: Colors.white),
-      ),
+      title: const Text('Add New Task'),
       content: SingleChildScrollView(
         child: Column(
           children: [
             TextField(
               controller: _titleController,
-              decoration: const InputDecoration(
-                labelText: 'Title',
-                labelStyle: TextStyle(color: Colors.teal),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.teal),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.teal),
-                ),
-              ),
+              decoration: const InputDecoration(labelText: 'Title'),
             ),
             const SizedBox(height: 10),
             TextField(
               controller: _descriptionController,
-              decoration: const InputDecoration(
-                labelText: 'Description',
-                labelStyle: TextStyle(color: Colors.teal),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.teal),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.teal),
-                ),
-              ),
+              decoration: const InputDecoration(labelText: 'Description'),
             ),
             const SizedBox(height: 10),
             DropdownButtonFormField<String>(
@@ -61,24 +39,11 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
               items: _categories
                   .map((category) => DropdownMenuItem(
                         value: category,
-                        child: Text(
-                          category,
-                          style: const TextStyle(color: Colors.white),
-                        ),
+                        child: Text(category),
                       ))
                   .toList(),
               onChanged: (value) => setState(() => _selectedCategory = value!),
-              dropdownColor: const Color(0xFF1E1E2C),
-              decoration: const InputDecoration(
-                labelText: 'Category',
-                labelStyle: TextStyle(color: Colors.teal),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.teal),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.teal),
-                ),
-              ),
+              decoration: const InputDecoration(labelText: 'Category'),
             ),
           ],
         ),
@@ -86,26 +51,29 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel', style: TextStyle(color: Colors.teal)),
+          child: const Text('Cancel'),
         ),
         ElevatedButton(
-          onPressed: () {
-            if (_titleController.text.isNotEmpty &&
-                _descriptionController.text.isNotEmpty) {
-              final task = Task(
-                title: _titleController.text,
-                description: _descriptionController.text,
-                category: _selectedCategory,
-                reminderTime: DateTime.now(),
-                urgency: 1,
-                importance: 1,
-              );
-              Provider.of<TaskViewModel>(context, listen: false).addTask(task);
-              Navigator.pop(context);
-            }
-          },
-          child: const Text('Add'),
-        ),
+        onPressed: () {
+          // Create a new task when the user presses the 'Add' button
+          if (_titleController.text.isNotEmpty &&
+              _descriptionController.text.isNotEmpty) {
+            final newTask = Task(
+              title: _titleController.text,
+              description: _descriptionController.text,
+              category: _selectedCategory,
+              reminderTime: DateTime.now(),
+              urgency: 1,
+              importance: 1,
+              isCompleted: false, // Explicitly set this
+            );
+            Provider.of<TaskViewModel>(context, listen: false).addTask(newTask);
+            Navigator.pop(context); // Close the dialog
+          }
+        },
+        child: const Text('Add'),
+      ),
+
       ],
     );
   }

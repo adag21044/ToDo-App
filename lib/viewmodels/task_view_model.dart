@@ -7,6 +7,7 @@ class TaskViewModel extends ChangeNotifier {
   List<Task> get tasks => _tasks;
 
   void addTask(Task task) {
+    task.isCompleted = task.isCompleted ?? false; // Null olmamasını sağla
     _tasks.add(task);
     notifyListeners();
   }
@@ -15,4 +16,10 @@ class TaskViewModel extends ChangeNotifier {
     _tasks.remove(task);
     notifyListeners();
   }
+
+  void toggleTaskCompletion(Task task) {
+    task.isCompleted = !task.isCompleted;
+    notifyListeners();
+  }
 }
+
