@@ -18,6 +18,7 @@ flutter:
   # Define assets here
   assets:
     - assets/icon/appicon.png
+  uses-material-design: true
 
 flutter_icons:
   android: "launcher_icon"      # Configures Android app icons
