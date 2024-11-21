@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../models/task.dart';
+import '../viewmodels/task_view_model.dart';
 
 class TaskListItem extends StatelessWidget {
   final Task task;
@@ -62,11 +64,26 @@ class TaskListItem extends StatelessWidget {
             color: task.isCompleted ? Colors.grey : Colors.white70,
           ),
         ),
-        trailing: IconButton(
-          icon: const Icon(Icons.delete, color: Colors.red),
-          onPressed: () {
-            // Delete action
-          },
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Tik işareti (Checkbox)
+            Checkbox(
+              value: task.isCompleted,
+              onChanged: (value) {
+                Provider.of<TaskViewModel>(context, listen: false)
+                    .toggleTaskCompletion(task);
+              },
+            ),
+            // Çöp kutusu (Silme)
+            IconButton(
+              icon: const Icon(Icons.delete, color: Colors.red),
+              onPressed: () {
+                Provider.of<TaskViewModel>(context, listen: false)
+                    .removeTask(task);
+              },
+            ),
+          ],
         ),
       ),
     );
