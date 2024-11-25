@@ -3,14 +3,18 @@ import 'package:provider/provider.dart';
 import 'viewmodels/task_view_model.dart';
 import 'views/tasks_page.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final taskViewModel = TaskViewModel();
+  await taskViewModel.loadTasks(); // Load tasks before running the app
   runApp(
     ChangeNotifierProvider(
-      create: (_) => TaskViewModel(),
+      create: (_) => taskViewModel,
       child: const ToDoApp(),
     ),
   );
 }
+
 
 class ToDoApp extends StatelessWidget {
   const ToDoApp({Key? key}) : super(key: key);

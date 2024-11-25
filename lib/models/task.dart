@@ -12,15 +12,45 @@ class Task {
   List<Subtask> subtasks;
 
   Task({
-  this.id,
-  required this.title,
-  required this.description,
-  required this.reminderTime,
-  required this.urgency,
-  required this.importance,
-  required this.category,
-  this.isCompleted = false,
-  List<Subtask>? subtasks, // Nullable parameter
-}) : subtasks = subtasks ?? []; // Initialize as an empty list if null
+    this.id,
+    required this.title,
+    required this.description,
+    required this.reminderTime,
+    required this.urgency,
+    required this.importance,
+    required this.category,
+    this.isCompleted = false,
+    List<Subtask>? subtasks,
+  }) : subtasks = subtasks ?? [];
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'description': description,
+      'reminderTime': reminderTime.toIso8601String(),
+      'urgency': urgency,
+      'importance': importance,
+      'category': category,
+      'isCompleted': isCompleted,
+      'subtasks': subtasks.map((subtask) => subtask.toJson()).toList(),
+    };
+  }
+
+  factory Task.fromJson(Map<String, dynamic> json) {
+    return Task(
+      id: json['id'],
+      title: json['title'],
+      description: json['description'],
+      reminderTime: DateTime.parse(json['reminderTime']),
+      urgency: json['urgency'],
+      importance: json['importance'],
+      category: json['category'],
+      isCompleted: json['isCompleted'],
+      subtasks: (json['subtasks'] as List)
+          .map((subtask) => Subtask.fromJson(subtask))
+          .toList(),
+    );
+  }
 }
 
