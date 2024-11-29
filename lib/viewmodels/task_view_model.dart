@@ -12,9 +12,11 @@ class TaskViewModel extends ChangeNotifier {
 
   Future<void> loadTasks() async {
     final loadedTasks = await _storageHelper.loadTasks();
+    _tasks.clear(); // Clear existing tasks
     _tasks.addAll(loadedTasks);
     notifyListeners();
   }
+
 
   void addTask(Task task) {
     _tasks.add(task);

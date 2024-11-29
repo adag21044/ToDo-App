@@ -6,7 +6,8 @@ import 'views/tasks_page.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final taskViewModel = TaskViewModel();
-  await taskViewModel.loadTasks(); // Load tasks before running the app
+  await taskViewModel.loadTasks(); // Ensure tasks are loaded at the start
+  print('Tasks loaded on startup: ${taskViewModel.tasks}');
   runApp(
     ChangeNotifierProvider(
       create: (_) => taskViewModel,
@@ -14,6 +15,7 @@ void main() async {
     ),
   );
 }
+
 
 
 class ToDoApp extends StatelessWidget {

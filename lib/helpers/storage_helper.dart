@@ -15,10 +15,15 @@ class StorageHelper {
   }
 
   Future<void> saveTasks(List<Task> tasks) async {
-    final file = await _file;
-    final jsonTasks = tasks.map((task) => task.toJson()).toList();
-    await file.writeAsString(jsonEncode(jsonTasks));
+    try {
+      final file = await _file;
+      final jsonTasks = tasks.map((task) => task.toJson()).toList();
+      await file.writeAsString(jsonEncode(jsonTasks));
+    } catch (e) {
+      print('Error saving tasks: $e');
+    }
   }
+
 
   Future<List<Task>> loadTasks() async {
     try {
@@ -26,13 +31,16 @@ class StorageHelper {
       if (await file.exists()) {
         final contents = await file.readAsString();
         final jsonTasks = jsonDecode(contents) as List;
+        print('Loaded tasks: $jsonTasks'); // Debug Log
         return jsonTasks.map((json) => Task.fromJson(json)).toList();
       } else {
+        print('Task file does not exist.');
         return [];
       }
     } catch (e) {
       print('Error loading tasks: $e');
       return [];
     }
-  }
+}
+
 }

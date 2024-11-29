@@ -38,19 +38,25 @@ class Task {
   }
 
   factory Task.fromJson(Map<String, dynamic> json) {
-    return Task(
-      id: json['id'],
-      title: json['title'],
-      description: json['description'],
-      reminderTime: DateTime.parse(json['reminderTime']),
-      urgency: json['urgency'],
-      importance: json['importance'],
-      category: json['category'],
-      isCompleted: json['isCompleted'],
-      subtasks: (json['subtasks'] as List)
-          .map((subtask) => Subtask.fromJson(subtask))
-          .toList(),
-    );
+    try {
+      return Task(
+        id: json['id'],
+        title: json['title'],
+        description: json['description'],
+        reminderTime: DateTime.parse(json['reminderTime']),
+        urgency: json['urgency'],
+        importance: json['importance'],
+        category: json['category'],
+        isCompleted: json['isCompleted'],
+        subtasks: (json['subtasks'] as List)
+            .map((subtask) => Subtask.fromJson(subtask))
+            .toList(),
+      );
+    } catch (e) {
+      print('Error parsing task from JSON: $e');
+      throw e; // Rethrow error to detect during development
+    }
   }
+
 }
 
