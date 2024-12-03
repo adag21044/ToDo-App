@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/task.dart';
 import '../viewmodels/task_view_model.dart';
+import '../services/notification_service.dart';
 
 class AddTaskDialog extends StatefulWidget {
-  final List<String> categories;
+  final List<String> categories; // Added categories parameter
 
   const AddTaskDialog({Key? key, required this.categories}) : super(key: key);
 
@@ -15,7 +16,7 @@ class AddTaskDialog extends StatefulWidget {
 class _AddTaskDialogState extends State<AddTaskDialog> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
-  late String _selectedCategory;
+  late String _selectedCategory; // Initialize with categories from the parent
   int _urgency = 1;
   int _importance = 1;
   DateTime _reminderTime = DateTime.now();
@@ -23,28 +24,10 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
   @override
   void initState() {
     super.initState();
-    _selectedCategory = widget.categories.first;
+    _selectedCategory = widget.categories.first; // Default to the first category
   }
 
-  /// Metodu tanımlıyoruz
-  Color _getColorForLevel(int level) {
-    switch (level) {
-      case 1:
-        return Colors.green;
-      case 2:
-        return Colors.lightGreen;
-      case 3:
-        return Colors.yellow;
-      case 4:
-        return Colors.orange;
-      case 5:
-        return Colors.red;
-      default:
-        return Colors.grey;
-    }
-  }
-
-  void _addTask() {
+  void _addTask() async {
     if (_titleController.text.isNotEmpty && _descriptionController.text.isNotEmpty) {
       final task = Task(
         title: _titleController.text,
@@ -56,7 +39,20 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
         subtasks: [],
       );
 
+      // Add task to TaskViewModel
       Provider.of<TaskViewModel>(context, listen: false).addTask(task);
+
+      // Schedule a notification for the task
+      await NotificationService().scheduleNotification(
+        id: task.hashCode, // Use a unique ID for each task
+        title: 'Reminder: ${task.title}',
+        body: task.description,
+        scheduledDate: task.reminderTime,
+        payload: {
+          'task_title': task.title, // Include task title or other details in the payload
+        },
+      );
+
       Navigator.pop(context);
     }
   }
@@ -64,31 +60,66 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Add New Task'),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      backgroundColor: const Color(0xFF1E1E2C),
+      title: const Text(
+        'Add New Task',
+        style: TextStyle(color: Colors.white),
+      ),
       content: SingleChildScrollView(
         child: Column(
           children: [
             TextField(
               controller: _titleController,
-              decoration: const InputDecoration(labelText: 'Title'),
+              decoration: const InputDecoration(
+                labelText: 'Title',
+                labelStyle: TextStyle(color: Colors.teal),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.teal),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.teal),
+                ),
+              ),
             ),
             const SizedBox(height: 10),
             TextField(
               controller: _descriptionController,
-              decoration: const InputDecoration(labelText: 'Description'),
+              decoration: const InputDecoration(
+                labelText: 'Description',
+                labelStyle: TextStyle(color: Colors.teal),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.teal),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.teal),
+                ),
+              ),
             ),
             const SizedBox(height: 10),
             DropdownButtonFormField<String>(
               value: _selectedCategory,
-              items: widget.categories.map((category) {
-                return DropdownMenuItem(
-                  value: category,
-                  child: Text(category),
-                );
-              }).toList(),
-              onChanged: (value) => setState(() {
-                _selectedCategory = value!;
-              }),
+              items: widget.categories
+                  .map((category) => DropdownMenuItem(
+                        value: category,
+                        child: Text(
+                          category,
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      ))
+                  .toList(),
+              onChanged: (value) => setState(() => _selectedCategory = value!),
+              dropdownColor: const Color(0xFF1E1E2C),
+              decoration: const InputDecoration(
+                labelText: 'Category',
+                labelStyle: TextStyle(color: Colors.teal),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.teal),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.teal),
+                ),
+              ),
             ),
             const SizedBox(height: 10),
             Row(
@@ -108,10 +139,6 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                     },
                   ),
                 ),
-                CircleAvatar(
-                  radius: 10,
-                  backgroundColor: _getColorForLevel(_urgency),
-                ),
               ],
             ),
             Row(
@@ -130,10 +157,6 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                       });
                     },
                   ),
-                ),
-                CircleAvatar(
-                  radius: 10,
-                  backgroundColor: _getColorForLevel(_importance),
                 ),
               ],
             ),
@@ -172,11 +195,11 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel'),
+          child: const Text('Cancel', style: TextStyle(color: Colors.teal)),
         ),
         ElevatedButton(
           onPressed: _addTask,
-          child: const Text('Add Task'),
+          child: const Text('Add'),
         ),
       ],
     );
