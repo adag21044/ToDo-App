@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../viewmodels/task_view_model.dart';
 import 'task_list_tab.dart';
 import 'add_task_dialog.dart';
+import '../viewmodels/category_view_model.dart';
 
 class TasksPage extends StatefulWidget {
   const TasksPage({Key? key}) : super(key: key);
@@ -12,7 +13,13 @@ class TasksPage extends StatefulWidget {
 }
 
 class _TasksPageState extends State<TasksPage> {
-  final List<String> _categories = ['My Tasks', 'Project Ideas', 'Daily', 'Work'];
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<TaskViewModel>(context, listen: false).loadTasks();
+    });
+  }
 
   void _addNewCategory() {
     final TextEditingController newListController = TextEditingController();
@@ -36,9 +43,8 @@ class _TasksPageState extends State<TasksPage> {
             ElevatedButton(
               onPressed: () {
                 if (newListController.text.isNotEmpty) {
-                  setState(() {
-                    _categories.add(newListController.text);
-                  });
+                  Provider.of<CategoryViewModel>(context, listen: false)
+                      .addCategory(newListController.text);
                   Navigator.pop(context);
                 }
               },
@@ -52,8 +58,10 @@ class _TasksPageState extends State<TasksPage> {
 
   @override
   Widget build(BuildContext context) {
+    final categories = Provider.of<CategoryViewModel>(context).categories;
+
     return DefaultTabController(
-      length: _categories.length,
+      length: categories.length,
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
@@ -72,25 +80,25 @@ class _TasksPageState extends State<TasksPage> {
           ],
           bottom: TabBar(
             isScrollable: true,
-            tabs: _categories
-                .map((category) => Tab(text: category))
-                .toList(),
+            tabs: categories.map((category) => Tab(text: category)).toList(),
           ),
         ),
         body: TabBarView(
-          children: _categories
+          children: categories
               .map((category) => TaskListTab(category: category))
               .toList(),
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            showDialog(
-              context: context,
-              builder: (_) => AddTaskDialog(categories: _categories),
-            );
-          },
-          child: const Icon(Icons.add),
-        ),
+        onPressed: () {
+          final categories = Provider.of<CategoryViewModel>(context, listen: false).categories;
+          showDialog(
+            context: context,
+            builder: (_) => AddTaskDialog(categories: categories),
+          );
+        },
+        child: const Icon(Icons.add),
+      ),
+
       ),
     );
   }

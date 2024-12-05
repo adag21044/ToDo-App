@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'viewmodels/task_view_model.dart';
 import 'views/tasks_page.dart';
 import 'services/notification_service.dart';
+import 'viewmodels/category_view_model.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,8 +16,11 @@ class ToDoApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => TaskViewModel(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => TaskViewModel()),
+        ChangeNotifierProvider(create: (_) => CategoryViewModel()..loadCategories()),
+      ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Görevler',

@@ -38,25 +38,34 @@ class Task {
   }
 
   factory Task.fromJson(Map<String, dynamic> json) {
-    try {
-      return Task(
-        id: json['id'],
-        title: json['title'],
-        description: json['description'],
-        reminderTime: DateTime.parse(json['reminderTime']),
-        urgency: json['urgency'],
-        importance: json['importance'],
-        category: json['category'],
-        isCompleted: json['isCompleted'],
-        subtasks: (json['subtasks'] as List)
-            .map((subtask) => Subtask.fromJson(subtask))
-            .toList(),
-      );
-    } catch (e) {
-      print('Error parsing task from JSON: $e');
-      throw e; // Rethrow error to detect during development
+  try {
+    String reminderTimeString = json['reminderTime'];
+    DateTime reminderTime;
+    if (reminderTimeString.contains('T')) {
+      reminderTime = DateTime.parse(reminderTimeString);
+    } else {
+      reminderTime = DateTime.parse(reminderTimeString + 'T00:00:00');
     }
-  }
 
+    return Task(
+      id: json['id'],
+      title: json['title'],
+      description: json['description'],
+      reminderTime: reminderTime,
+      urgency: json['urgency'],
+      importance: json['importance'],
+      category: json['category'],
+      isCompleted: json['isCompleted'] == 1 || json['isCompleted'] == true,
+      subtasks: (json['subtasks'] as List?)
+              ?.map((subtask) => Subtask.fromJson(subtask))
+              .toList() ??
+          [],
+    );
+  } catch (e) {
+    print('Error parsing task from JSON: $e');
+    throw e;
+  }
 }
 
+
+}

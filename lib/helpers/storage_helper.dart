@@ -18,29 +18,28 @@ class StorageHelper {
     try {
       final file = await _file;
       final jsonTasks = tasks.map((task) => task.toJson()).toList();
+      print('Saving tasks: ${jsonEncode(jsonTasks)}'); // Debug log
       await file.writeAsString(jsonEncode(jsonTasks));
+      print('Tasks saved successfully.');
     } catch (e) {
       print('Error saving tasks: $e');
     }
   }
 
-
   Future<List<Task>> loadTasks() async {
     try {
       final file = await _file;
-      if (await file.exists()) {
-        final contents = await file.readAsString();
-        final jsonTasks = jsonDecode(contents) as List;
-        print('Loaded tasks: $jsonTasks'); // Debug Log
-        return jsonTasks.map((json) => Task.fromJson(json)).toList();
-      } else {
-        print('Task file does not exist.');
+      if (!await file.exists()) {
+        print('tasks.json does not exist. Returning an empty list.');
         return [];
       }
+      final contents = await file.readAsString();
+      print('Loaded JSON content: $contents'); // Debug log
+      final jsonTasks = jsonDecode(contents) as List;
+      return jsonTasks.map((json) => Task.fromJson(json)).toList();
     } catch (e) {
       print('Error loading tasks: $e');
       return [];
     }
-}
-
+  }
 }

@@ -14,7 +14,8 @@ class Subtask {
   factory Subtask.fromJson(Map<String, dynamic> json) {
     return Subtask(
       title: json['title'],
-      isCompleted: json['isCompleted'],
+      isCompleted: json['isCompleted'] == 1 || json['isCompleted'] == true,
     );
   }
+
 }

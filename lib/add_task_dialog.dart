@@ -3,14 +3,20 @@ import 'package:provider/provider.dart';
 import '../models/task.dart';
 import '../viewmodels/task_view_model.dart';
 
+
 class AddTaskDialog extends StatefulWidget {
-  const AddTaskDialog({Key? key}) : super(key: key);
+  final List<String> categories;
+
+  const AddTaskDialog({Key? key, required this.categories}) : super(key: key);
 
   @override
   _AddTaskDialogState createState() => _AddTaskDialogState();
 }
 
+
 class _AddTaskDialogState extends State<AddTaskDialog> {
+
+
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   String _selectedCategory = 'My Tasks';
@@ -18,6 +24,12 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
   int _urgency = 1;
   int _importance = 1;
   DateTime _reminderTime = DateTime.now();
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedCategory = widget.categories.first;
+  }
 
   @override
   Widget build(BuildContext context) {

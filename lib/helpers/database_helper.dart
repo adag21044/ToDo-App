@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import '../models/task.dart';
@@ -23,15 +25,16 @@ class DatabaseHelper {
         return db.execute(
           '''
           CREATE TABLE tasks(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            title TEXT,
-            description TEXT,
-            reminderTime TEXT,
-            urgency INTEGER,
-            importance INTEGER,
-            category TEXT,
-            isCompleted INTEGER
-          )
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          title TEXT,
+          description TEXT,
+          reminderTime TEXT,
+          urgency INTEGER,
+          importance INTEGER,
+          category TEXT,
+          isCompleted INTEGER,
+          subtasks TEXT
+        )
           ''',
         );
       },
@@ -40,9 +43,12 @@ class DatabaseHelper {
   }
 
   Future<int> insertTask(Task task) async {
-    final db = await database;
-    return await db.insert('tasks', task.toJson());
-  }
+  final db = await database;
+  final data = task.toJson();
+  data['subtasks'] = jsonEncode(task.subtasks.map((e) => e.toJson()).toList());
+  return await db.insert('tasks', data);
+}
+
 
   Future<List<Task>> getTasks() async {
     final db = await database;
