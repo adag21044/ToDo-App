@@ -12,7 +12,7 @@ class Task {
   List<Subtask> subtasks;
 
   Task({
-    this.id,
+    int? id, // Opsiyonel id alıyoruz
     required this.title,
     required this.description,
     required this.reminderTime,
@@ -21,7 +21,8 @@ class Task {
     required this.category,
     this.isCompleted = false,
     List<Subtask>? subtasks,
-  }) : subtasks = subtasks ?? [];
+  })  : id = id ?? DateTime.now().millisecondsSinceEpoch, // Benzersiz id atanıyor
+        subtasks = subtasks ?? [];
 
   Map<String, dynamic> toJson() {
     return {

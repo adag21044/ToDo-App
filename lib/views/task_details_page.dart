@@ -17,15 +17,28 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
   final _subtaskController = TextEditingController();
 
   void _addSubtask() {
-    final title = _subtaskController.text.trim();
-    if (title.isNotEmpty) {
-      setState(() {
-        widget.task.subtasks.add(Subtask(title: title));
-      });
-      _subtaskController.clear();
-      Provider.of<TaskViewModel>(context, listen: false).saveTask(widget.task);
-    }
+  final title = _subtaskController.text.trim();
+  if (title.isNotEmpty) {
+    final updatedTask = Task(
+      id: widget.task.id,
+      title: widget.task.title,
+      description: widget.task.description,
+      reminderTime: widget.task.reminderTime,
+      urgency: widget.task.urgency,
+      importance: widget.task.importance,
+      category: widget.task.category,
+      isCompleted: widget.task.isCompleted,
+      subtasks: [...widget.task.subtasks, Subtask(title: title)],
+    );
+
+    Provider.of<TaskViewModel>(context, listen: false).saveTask(updatedTask);
+    setState(() {
+      widget.task.subtasks.add(Subtask(title: title));
+    });
+    _subtaskController.clear();
   }
+}
+
 
   Color _getColorForLevel(int level) {
     switch (level) {

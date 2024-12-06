@@ -57,9 +57,13 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
     }
   }
 
+  bool _isAddingTask = false;
+
   void _addTask() async {
-    if (_titleController.text.isNotEmpty &&
-        _descriptionController.text.isNotEmpty) {
+    if (_isAddingTask) return; // Çift tıklamaları engelle
+    _isAddingTask = true;
+
+    if (_titleController.text.isNotEmpty && _descriptionController.text.isNotEmpty) {
       final task = Task(
         title: _titleController.text,
         description: _descriptionController.text,
@@ -70,10 +74,8 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
         subtasks: subtasks,
       );
 
-      // Görevi kaydet
       Provider.of<TaskViewModel>(context, listen: false).addTask(task);
 
-      // Bildirim planla
       await NotificationService().scheduleNotification(
         id: task.hashCode,
         title: 'Reminder: ${task.title}',
@@ -82,9 +84,14 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
         payload: {'task_title': task.title},
       );
 
+      print('Task successfully added: ${task.toJson()}');
       Navigator.pop(context);
     }
+
+    _isAddingTask = false;
   }
+
+
 
   @override
   Widget build(BuildContext context) {

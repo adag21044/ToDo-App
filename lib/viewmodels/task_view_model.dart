@@ -30,11 +30,18 @@ class TaskViewModel extends ChangeNotifier {
   }
 
   void addTask(Task task) {
-    _tasks.add(task);
-    print('Task added: ${task.toJson()}'); // Debug log
-    _storageHelper.saveTasks(_tasks); // Save after adding
-    notifyListeners();
+    if (!_tasks.any((t) => t.title == task.title && t.category == task.category)) {
+      _tasks.add(task);
+      print('Task added: ${task.toJson()}');
+      _storageHelper.saveTasks(_tasks); // Save to local storage
+      notifyListeners();
+    } else {
+      print('Task already exists: ${task.toJson()}');
+    }
   }
+
+
+
 
   void removeTask(Task task) {
     _tasks.remove(task);
@@ -55,10 +62,12 @@ class TaskViewModel extends ChangeNotifier {
   void saveTask(Task updatedTask) {
     final taskIndex = _tasks.indexWhere((task) => task.id == updatedTask.id);
     if (taskIndex != -1) {
-      _tasks[taskIndex] = updatedTask; // Görevi güncelle
-      print('Task updated: ${updatedTask.toJson()}'); // Debug log
-      _storageHelper.saveTasks(_tasks); // Değişiklikleri kaydet
+      _tasks[taskIndex] = updatedTask;
+      print('Task updated: ${updatedTask.toJson()}');
+      _storageHelper.saveTasks(_tasks);
       notifyListeners();
     }
   }
+ 
+
 }

@@ -26,7 +26,11 @@ class TaskListTab extends StatelessWidget {
           return importanceComparison;
         }
         return b.urgency.compareTo(a.urgency);
-      });
+      }
+      
+      );
+
+      print('Tasks in category $category: $tasks');
 
     return tasks.isEmpty
         ? const Center(
