@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import '../models/task.dart';
+import 'package:provider/provider.dart';
 import '../viewmodels/task_view_model.dart';
 
 class TaskListItem extends StatelessWidget {
@@ -67,7 +67,6 @@ class TaskListItem extends StatelessWidget {
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Tik işareti (Checkbox)
             Checkbox(
               value: task.isCompleted,
               onChanged: (value) {
@@ -75,7 +74,6 @@ class TaskListItem extends StatelessWidget {
                     .toggleTaskCompletion(task);
               },
             ),
-            // Çöp kutusu (Silme)
             IconButton(
               icon: const Icon(Icons.delete, color: Colors.red),
               onPressed: () {

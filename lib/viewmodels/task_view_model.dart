@@ -16,7 +16,6 @@ class TaskViewModel extends ChangeNotifier {
     await loadTasks();
   }
 
-
   Future<void> loadTasks() async {
     try {
       final loadedTasks = await _storageHelper.loadTasks();
@@ -49,5 +48,17 @@ class TaskViewModel extends ChangeNotifier {
     print('Task toggled: ${task.toJson()}'); // Debug log
     _storageHelper.saveTasks(_tasks); // Save after updating
     notifyListeners();
+  }
+
+  /// **Yeni Eklenen Metod: `saveTask`**
+  /// Bu metod, bir görevi (ve alt görevlerini) güncellemek için kullanılır.
+  void saveTask(Task updatedTask) {
+    final taskIndex = _tasks.indexWhere((task) => task.id == updatedTask.id);
+    if (taskIndex != -1) {
+      _tasks[taskIndex] = updatedTask; // Görevi güncelle
+      print('Task updated: ${updatedTask.toJson()}'); // Debug log
+      _storageHelper.saveTasks(_tasks); // Değişiklikleri kaydet
+      notifyListeners();
+    }
   }
 }
